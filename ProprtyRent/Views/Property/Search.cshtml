@@ -1,0 +1,62 @@
+﻿@model IEnumerable<PropertyRent.Models.Property>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Search Results";
+}
+
+<div class="container py-4">
+    <h2 class="fw-bold text-primary mb-4">🔎 Search Results</h2>
+
+    <!-- Search Filter Form -->
+    <form asp-controller="Property" asp-action="Search" method="get" class="mb-4 p-3 bg-light rounded shadow-sm">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <input type="text" name="query" value="@ViewBag.Query" class="form-control shadow-sm" placeholder="Search properties..." />
+            </div>
+            <div class="col-md-3">
+                <input type="number" name="minPrice" value="@ViewBag.MinPrice" class="form-control shadow-sm" placeholder="Min Price" />
+            </div>
+            <div class="col-md-3">
+                <input type="number" name="maxPrice" value="@ViewBag.MaxPrice" class="form-control shadow-sm" placeholder="Max Price" />
+            </div>
+            <div class="col-md-2 d-grid">
+                <button type="submit" class="btn btn-primary shadow-sm fw-bold">Filter</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Property Cards -->
+    @if (!Model.Any())
+    {
+        <div class="alert alert-warning text-center shadow-sm fw-bold">
+            <i class="bi bi-exclamation-circle"></i> No properties found. Try adjusting your search filters.
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0 rounded-3 property-card">
+                        <div class="position-relative">
+                            <img src="@(string.IsNullOrEmpty(item.ImagePath) ? "/images/property-placeholder.jpg" : item.ImagePath)"
+                                 class="card-img-top rounded-top" alt="@item.Title" style="height: 250px; object-fit: cover;">
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-primary fw-bold">@item.Title</h5>
+                            <p class="card-text text-muted">@item.Description</p>
+                            <p class="card-text"><i class="bi bi-geo-alt-fill"></i> @item.Location</p>
+                            <p class="card-text"><span class="fw-bold text-success">₹@item.PricePerDay/day</span></p>
+                            <div class="mt-auto d-grid">
+                                <a asp-controller="Booking" asp-action="Book" asp-route-id="@item.Id" class="btn btn-success fw-bold shadow-sm rounded-pill">
+                                    <i class="bi bi-calendar-check"></i> Book Now
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

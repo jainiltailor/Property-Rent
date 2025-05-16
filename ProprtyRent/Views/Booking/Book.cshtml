@@ -1,0 +1,24 @@
+﻿@model PropertyRent.Models.Property
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Book Property";
+}
+
+<h2>Book Property: @Model.Title</h2>
+
+<form asp-action="Book" method="post">
+    <input type="hidden" name="propertyId" value="@Model.Id" />
+    <div class="form-group">
+        <label>Start Date</label>
+        <input type="date" name="startDate" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label>End Date</label>
+        <input type="date" name="endDate" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label>Number of People</label>
+        <input type="number" name="numberOfPeople" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-success">Confirm Booking</button>
+</form>

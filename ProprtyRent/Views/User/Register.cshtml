@@ -1,0 +1,147 @@
+﻿@model PropertyRent.Models.User
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Register";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0 mt-5 rounded-3">
+                <div class="card-header bg-success text-white text-center py-3 rounded-top">
+                    <h2 class="mb-0 fw-bold">Create Your Account</h2>
+                </div>
+                <div class="card-body p-4">
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger shadow-sm rounded-pill">
+                            <i class="bi bi-exclamation-circle me-2"></i> @TempData["ErrorMessage"]
+                        </div>
+                    }
+
+                    <form asp-action="Register" method="post">
+                        <div class="form-group mb-3">
+                            <label asp-for="Name" class="form-label fw-bold">Full Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-person"></i></span>
+                                <input asp-for="Name" class="form-control shadow-sm rounded-pill" placeholder="Enter your full name" autofocus />
+                            </div>
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Email" class="form-label fw-bold">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-envelope"></i></span>
+                                <input asp-for="Email" class="form-control shadow-sm rounded-pill" placeholder="example@email.com" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                            <small class="form-text text-muted">We'll never share your email with anyone else.</small>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Password" class="form-label fw-bold">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-lock"></i></span>
+                                <input asp-for="Password" type="password" class="form-control shadow-sm rounded-pill" id="password" />
+                                <button class="btn btn-outline-secondary rounded-pill" type="button" id="togglePassword">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                            <div class="password-strength mt-2">
+                                <div class="progress" style="height: 5px;">
+                                    <div id="password-strength-meter" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <small id="password-strength-text" class="form-text">Password strength: Type to check</small>
+                            </div>
+                            <small class="form-text text-muted">Use at least 8 characters with letters, numbers, and symbols.</small>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input shadow-sm" type="checkbox" id="termsCheck" required />
+                            <label class="form-check-label fw-bold" for="termsCheck">
+                                I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal" class="text-success fw-bold">Terms and Conditions</a>
+                            </label>
+                        </div>
+
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-success btn-lg rounded-pill shadow-sm">Create Account</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer bg-light text-center py-3 rounded-bottom">
+                    <p class="mb-0">
+                        Already have an account?
+                        <a href="@Url.Action("Login", "User")" class="text-decoration-none text-success fw-bold">Sign in</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Terms and Conditions Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold text-success" id="termsModalLabel">Terms and Conditions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Please read these terms and conditions carefully before using our property rental service.</p>
+                <p>By creating an account, you agree to our privacy policy and terms of service.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success shadow-sm rounded-pill" data-bs-dismiss="modal">I Understand</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.replace('bi-eye', 'bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.replace('bi-eye-slash', 'bi-eye');
+            }
+        });
+
+        document.getElementById('password').addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+
+            if (password.length >= 8) strength += 25;
+            if (password.match(/[a-z]/)) strength += 25;
+            if (password.match(/[A-Z]/)) strength += 25;
+            if (password.match(/[0-9]/) || password.match(/[^a-zA-Z0-9]/)) strength += 25;
+
+            const meter = document.getElementById('password-strength-meter');
+            const text = document.getElementById('password-strength-text');
+
+            meter.style.width = strength + '%';
+
+            if (strength <= 25) {
+                meter.className = 'progress-bar bg-danger';
+                text.innerHTML = 'Password strength: Weak';
+            } else if (strength <= 50) {
+                meter.className = 'progress-bar bg-warning';
+                text.innerHTML = 'Password strength: Fair';
+            } else if (strength <= 75) {
+                meter.className = 'progress-bar bg-info';
+                text.innerHTML = 'Password strength: Good';
+            } else {
+                meter.className = 'progress-bar bg-success';
+                text.innerHTML = 'Password strength: Strong';
+            }
+        });
+    </script>
+}

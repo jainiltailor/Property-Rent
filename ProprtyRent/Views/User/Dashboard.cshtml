@@ -1,0 +1,297 @@
+﻿@model PropertyRent.Models.UserDashboardViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "My Dashboard";
+}
+
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-person-circle fs-1 me-3 text-primary"></i>
+                <div>
+                    <h2 class="mb-1 fw-bold">Welcome, @User.Identity.Name!</h2>
+                    <p class="text-muted mb-0">Manage your properties and bookings seamlessly.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 d-flex justify-content-md-end align-items-center mt-3 mt-md-0">
+            <a asp-controller="Property" asp-action="Add" class="btn btn-primary d-flex align-items-center shadow-sm rounded-pill px-4">
+                <i class="bi bi-plus-circle me-2"></i> Add New Property
+            </a>
+        </div>
+    </div>
+
+    <!-- Dashboard Stats -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white h-100 shadow-lg rounded-3">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0 fw-bold">My Properties</h5>
+                        <i class="bi bi-houses fs-1"></i>
+                    </div>
+                    <h2 class="mt-3 mb-0">@Model.MyProperties.Count()</h2>
+                    <p class="card-text mt-2">@Model.MyProperties.Count(p => p.IsApproved) approved, @Model.MyProperties.Count(p => !p.IsApproved) pending</p>
+                    <a asp-controller="Property" asp-action="MyProperties" class="mt-auto text-white fw-bold">View all <i class="bi bi-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white h-100 shadow-lg rounded-3">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0 fw-bold">My Bookings</h5>
+                        <i class="bi bi-calendar-check fs-1"></i>
+                    </div>
+                    <h2 class="mt-3 mb-0">@Model.MyBookings.Count()</h2>
+                    <p class="card-text mt-2">Total value: ₹@Model.MyBookings.Sum(b => b.TotalAmount)</p>
+                    <a asp-controller="Booking" asp-action="MyBookings" class="mt-auto text-white fw-bold">View all <i class="bi bi-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-white h-100 shadow-lg rounded-3">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0 fw-bold">Quick Actions</h5>
+                        <i class="bi bi-lightning-charge fs-1"></i>
+                    </div>
+                    <div class="list-group list-group-flush mt-3 bg-transparent">
+                        <a asp-controller="Property" asp-action="Add" class="list-group-item list-group-item-action bg-transparent border-0 text-white ps-0 fw-bold">
+                            <i class="bi bi-plus-circle me-2"></i> Add new property
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- My Properties Section -->
+<div class="card mb-5 shadow-lg rounded-3">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3 border-bottom">
+        <h3 class="mb-0 fs-4 fw-bold text-primary">
+            <i class="bi bi-houses me-2"></i> My Properties
+        </h3>
+        <a asp-controller="Property" asp-action="MyProperties" class="btn btn-sm btn-outline-primary rounded-pill shadow-sm">
+            View All
+        </a>
+    </div>
+    <div class="card-body">
+        @if (!Model.MyProperties.Any())
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-house-add text-muted fs-1"></i>
+                <p class="text-muted mt-3 mb-0">You haven't added any properties yet.</p>
+                <a asp-controller="Property" asp-action="Add" class="btn btn-primary mt-3 rounded-pill shadow-sm">
+                    <i class="bi bi-plus-circle me-2"></i> Add Your First Property
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                @foreach (var item in Model.MyProperties.Take(3))
+                {
+                    <div class="col">
+                        <div class="card h-100 shadow-sm border-0 property-card rounded-3">
+                            <div class="position-relative">
+                                <img src="@(string.IsNullOrEmpty(item.ImagePath) ? "/images/property-placeholder.jpg" : item.ImagePath)"
+                                     class="card-img-top" alt="@item.Title" style="height: 180px; object-fit: cover; border-radius: 12px;">
+                                <span class="position-absolute top-0 end-0 badge @(item.IsApproved ? "bg-success" : "bg-warning text-dark") m-2 rounded-pill shadow-sm">
+                                    @(item.IsApproved ? "Approved" : "Pending")
+                                </span>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title fw-bold text-primary">@item.Title</h5>
+                                <p class="card-text small text-muted text-truncate">@item.Description</p>
+                                <p class="card-text">
+                                    <strong class="text-success">₹@item.PricePerDay</strong>
+                                    <small class="text-muted">per day</small>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (Model.MyProperties.Count() > 3)
+                {
+                    <div class="col">
+                        <div class="card h-100 border-dashed d-flex justify-content-center align-items-center rounded-3">
+                            <div class="text-center p-4">
+                                <span class="badge bg-primary mb-3 shadow-sm">@Model.MyProperties.Count() - 3 more</span>
+                                <p class="mb-3 text-muted">You have more properties</p>
+                                <a asp-controller="Property" asp-action="MyProperties" class="btn btn-outline-primary rounded-pill shadow-sm">
+                                    View All Properties
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<!-- My Bookings Section -->
+<div class="card shadow-lg rounded-3">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3 border-bottom">
+        <h3 class="mb-0 fs-4 fw-bold text-success">
+            <i class="bi bi-calendar-check me-2"></i> My Bookings
+        </h3>
+        <a asp-controller="Booking" asp-action="MyBookings" class="btn btn-sm btn-outline-success rounded-pill shadow-sm">
+            View All
+        </a>
+    </div>
+    <div class="card-body">
+        @if (!Model.MyBookings.Any())
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-calendar-plus text-muted fs-1"></i>
+                <p class="text-muted mt-3 mb-0">You don't have any bookings yet.</p>
+                <a asp-controller="Property" asp-action="List" class="btn btn-success mt-3 rounded-pill shadow-sm">
+                    <i class="bi bi-search me-2"></i> Browse Properties
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Property</th>
+                            <th>Duration</th>
+                            <th>Status</th>
+                            <th>Total</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var booking in Model.MyBookings.Take(5))
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="@(string.IsNullOrEmpty(booking.Property.ImagePath) ? "/images/property-placeholder.jpg" : booking.Property.ImagePath)"
+                                             class="rounded me-3 shadow-sm" alt="@booking.Property.Title" width="50" height="50" style="object-fit: cover;">
+                                        <div>
+                                            <div class="fw-bold text-primary">@booking.Property.Title</div>
+                                            <small class="text-muted">@booking.Property.Location</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>@booking.StartDate.ToString("MMM dd") - @booking.EndDate.ToString("MMM dd, yyyy")</div>
+                                    <small class="text-muted">@((booking.EndDate - booking.StartDate).Days) days, @booking.NumberOfPeople people</small>
+                                </td>
+                                <td>
+                                    @{
+                                        var today = DateTime.Today;
+                                        string statusClass = booking.EndDate < today ? "bg-secondary"
+                                        : booking.StartDate <= today && today <= booking.EndDate ? "bg-success"
+                                        : "bg-info";
+                                        string statusText = booking.EndDate < today ? "Completed"
+                                        : booking.StartDate <= today && today <= booking.EndDate ? "Active"
+                                        : "Upcoming";
+                                    }
+                                    <span class="badge @statusClass rounded-pill shadow-sm">@statusText</span>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-success">₹@booking.TotalAmount</div>
+                                    <small class="text-muted">₹@(booking.TotalAmount / (booking.EndDate - booking.StartDate).Days) per day</small>
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="Receipt" asp-controller="Booking" asp-route-id="@booking.Id"
+                                           class="btn btn-outline-success rounded-pill shadow-sm">
+                                            <i class="bi bi-file-earmark-text"></i> Receipt
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @if (Model.MyBookings.Count() > 5)
+            {
+                <div class="text-center mt-3">
+                    <a asp-controller="Booking" asp-action="MyBookings" class="btn btn-outline-primary rounded-pill shadow-sm">
+                        View All @Model.MyBookings.Count() Bookings
+                    </a>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .border-dashed {
+            border-style: dashed !important;
+            border-width: 2px !important;
+            border-color: #ced4da !important;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .property-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+            .property-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 15px 25px rgba(0,0,0,0.15) !important;
+            }
+
+        /* Table hover effect */
+        .table-hover tbody tr {
+            transition: all 0.3s ease;
+        }
+
+            .table-hover tbody tr:hover {
+                background-color: rgba(0, 123, 255, 0.08);
+                cursor: pointer;
+            }
+
+        /* Enhanced toast messages */
+        .toast {
+            opacity: 0.9;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+            .toast:hover {
+                opacity: 1;
+            }
+    </style>
+}
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Smooth hover effects for property cards
+            const cards = document.querySelectorAll('.property-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px)';
+                    this.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Welcome toast on first visit
+            const hasSeenWelcome = localStorage.getItem('dashboard_welcome_seen');
+            if (!hasSeenWelcome) {
+                if (typeof showNotification === 'function') {
+                    showNotification('Welcome to your dashboard! Manage your properties and bookings seamlessly.', 'success');
+                    localStorage.setItem('dashboard_welcome_seen', 'true');
+                }
+            }
+        });
+    </script>
+}

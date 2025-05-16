@@ -1,0 +1,185 @@
+﻿@model IEnumerable<PropertyRent.Models.Property>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "All Properties";
+}
+
+<div class="container py-4">
+    <!-- Hero Section -->
+    <div class="bg-body rounded-3 p-4 p-md-5 mb-4" style="color: #f9f856a;">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="fw-bold">Find Your Perfect Property</h1>
+                <p class="lead text">Browse our collection of high-quality rental properties in prime locations.</p>
+            </div>
+            <div class="col-lg-4">
+                <!-- Search Form -->
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <form class="row g-2">
+                            <div class="col-md-12">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0">
+                                        <i class="bi bi-search text-muted"></i>
+                                    </span>
+                                    <input type="text" class="form-control border-start-0" placeholder="Search properties...">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <select class="form-select">
+                                    <option selected>Any location</option>
+                                    <option>Mumbai</option>
+                                    <option>Delhi</option>
+                                    <option>Bangalore</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <select class="form-select">
+                                    <option selected>Price range</option>
+                                    <option>Under ₹1000/day</option>
+                                    <option>₹1000-₹2000/day</option>
+                                    <option>Over ₹2000/day</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="bi bi-filter me-2"></i>Filter Results
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Property Listing -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 style="color:gray">Available Properties</h2>
+            <p class="text-muted mb-0">Showing @Model.Count() properties</p>
+        </div>
+        <div class="btn-group">
+            <button type="button" class="btn btn-outline-secondary active">
+                <i class="bi bi-grid-3x3-gap"></i>
+            </button>
+            <button type="button" class="btn btn-outline-secondary">
+                <i class="bi bi-list"></i>
+            </button>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i> No properties are currently available. Please check back later.
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4">
+            @foreach (var item in Model)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm property-card border-0">
+                        <div class="position-relative">
+                            <img src="@(string.IsNullOrEmpty(item.ImagePath) ? "/images/property-placeholder.jpg" : item.ImagePath)"
+                                 class="card-img-top" alt="@item.Title" style="height: 200px; object-fit: cover;">
+                            <div class="position-absolute top-0 end-0 m-3">
+                                <button class="btn btn-sm btn-light shadow-sm rounded-circle" title="Add to favorites">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title mb-0">@item.Title</h5>
+                                <span class="badge bg-primary rounded-pill">Available</span>
+                            </div>
+                            <p class="card-text mb-3 text-truncate" title="@item.Description">@item.Description</p>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="text-primary fw-bold fs-5">₹@item.PricePerDay<span class="text-muted fs-6">/day</span></div>
+                                <div class="text-muted small">
+                                    <i class="bi bi-geo-alt-fill"></i> @item.Location
+                                </div>
+                            </div>
+                            <div class="d-flex property-features small text-muted mb-3">
+                                <div class="me-3"><i class="bi bi-aspect-ratio me-1"></i> 1200 sq ft</div>
+                                <div class="me-3"><i class="bi bi-person me-1"></i> 4 people</div>
+                                <div><i class="bi bi-star-fill me-1 text-warning"></i> 4.8/5</div>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <a asp-controller="Property" asp-action="Details" asp-route-id="@item.Id"
+                                   class="btn btn-outline-secondary">
+                                    <i class="bi bi-eye me-1"></i> View Details
+                                </a>
+                                <a asp-controller="Booking" asp-action="Book" asp-route-id="@item.Id"
+                                   class="btn btn-success">
+                                    <i class="bi bi-calendar-check me-1"></i> Book Now
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Property pagination" class="my-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#">Next</a>
+                </li>
+            </ul>
+        </nav>
+    }
+</div>
+
+@section Styles {
+    <style>
+        .property-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+            .property-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+            }
+
+        .property-features {
+            display: flex;
+            flex-wrap: wrap;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle heart icon for favorites
+            const heartButtons = document.querySelectorAll('.btn-light i.bi-heart');
+            heartButtons.forEach(heart => {
+                heart.parentElement.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (heart.classList.contains('bi-heart')) {
+                        heart.classList.remove('bi-heart');
+                        heart.classList.add('bi-heart-fill');
+                        heart.classList.add('text-danger');
+                    } else {
+                        heart.classList.remove('bi-heart-fill');
+                        heart.classList.remove('text-danger');
+                        heart.classList.add('bi-heart');
+                    }
+                });
+            });
+        });
+    </script>
+}

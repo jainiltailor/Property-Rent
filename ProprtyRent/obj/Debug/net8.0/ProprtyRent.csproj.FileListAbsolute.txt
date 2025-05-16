@@ -1,0 +1,8 @@
+D:\# BT IT = CO\SEM 6\Practical\.NET\ProprtyRent\ProprtyRent\obj\Debug\net8.0\ProprtyRent.csproj.AssemblyReference.cache
+D:\# BT IT = CO\SEM 6\Practical\.NET\ProprtyRent\ProprtyRent\obj\Debug\net8.0\ProprtyRent.GeneratedMSBuildEditorConfig.editorconfig
+D:\# BT IT = CO\SEM 6\Practical\.NET\ProprtyRent\ProprtyRent\obj\Debug\net8.0\ProprtyRent.AssemblyInfoInputs.cache
+D:\# BT IT = CO\SEM 6\Practical\.NET\ProprtyRent\ProprtyRent\obj\Debug\net8.0\ProprtyRent.AssemblyInfo.cs
+D:\# BT IT = CO\SEM 6\Practical\.NET\ProprtyRent\ProprtyRent\obj\Debug\net8.0\ProprtyRent.csproj.CoreCompileInputs.cache
+D:\# BT IT = CO\SEM 6\Practical\.NET\ProprtyRent\ProprtyRent\obj\Debug\net8.0\ProprtyRent.MvcApplicationPartsAssemblyInfo.cache
+D:\# BT IT = CO\SEM 6\Practical\.NET\ProprtyRent\ProprtyRent\obj\Debug\net8.0\ProprtyRent.RazorAssemblyInfo.cache
+D:\# BT IT = CO\SEM 6\Practical\.NET\ProprtyRent\ProprtyRent\obj\Debug\net8.0\ProprtyRent.RazorAssemblyInfo.cs

@@ -1,0 +1,394 @@
+﻿@*
+    Enhanced Master Layout for PropertyRental
+    Features: Responsive design, dark/light mode, improved navigation, modern UI components
+*@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="PropertyRental - Find your perfect rental property" />
+    <title>@ViewData["Title"] - PropertyRental</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="~/favicon.png" />
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #004488; /* Deep blue for improved contrast */
+            --secondary-color: #5588cc; /* Softer contrast */
+            --accent-color: #ffcc00; /* Brighter yellow for visibility */
+            --background-light: #f8f9fa;
+            --background-dark: #212529;
+            --text-light: #ffffff;
+            --text-dark: black;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: var(--primary-color);
+        }
+
+        .nav-item {
+            margin: 0 5px;
+        }
+
+        .active-link {
+            border-bottom: 3px solid var(--accent-color);
+        }
+
+        .btn-theme {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            border-radius: 8px;
+            padding: 10px 16px;
+            transition: all 0.3s ease;
+        }
+
+            .btn-theme:hover {
+                background-color: var(--secondary-color);
+                color: var(--text-light);
+            }
+
+        .footer {
+            margin-top: auto;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            padding: 15px 0;
+            text-align: center;
+        }
+
+        [data-bs-theme="dark"] .footer {
+            background-color: #121212; /* Or any dark shade */
+            color: var(--text-light);
+        }
+        .dropdown-menu {
+            border-radius: 8px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+            background-color: var(--background-light);
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1050;
+        }
+        /* Apply dark mode styles */
+        [data-bs-theme="dark"] {
+            --primary-color: #0055aa;
+            --secondary-color: #99bbdd;
+            --background-light: #212529; /* Ensuring the background switches */
+            --background-dark: #212529;
+            --text-light: #ffffff;
+            --text-dark:#f8f9fa;
+        }
+
+        /* Ensure body uses the correct background */
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--background-light); /* This is now dynamic */
+            color: var(--text-dark);
+        }
+        
+
+        /* Navigation Link Hover Effects */
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+            .nav-link:hover {
+                color: var(--accent-color);
+            }
+
+        /* Button Hover Effect */
+        .btn-custom {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            border-radius: 50px;
+            padding: 10px 24px;
+            transition: all 0.3s ease-in-out;
+        }
+
+            .btn-custom:hover {
+                background-color: var(--accent-color);
+                color: var(--text-dark);
+                transform: scale(1.05);
+            }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: transparent;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background-color: var(--accent-color);
+            transition: width 0.3s;
+        }
+    </style>
+
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="fade-in">
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="pageLoadProgress"></div>
+    </div>
+
+    <header>
+        <nav class="navbar navbar-expand-lg shadow-sm sticky-top"
+             style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center text-light" asp-controller="Home" asp-action="Landing">
+                    <i class="bi bi-house-door me-2 text-warning"></i> <strong>PropertyRental</strong>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link text-light @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active-link" : "")"
+                               asp-controller="Home" asp-action="Landing">
+                                <i class="bi bi-house text-warning"></i> Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light @(ViewContext.RouteData.Values["controller"]?.ToString() == "Property" && ViewContext.RouteData.Values["action"]?.ToString() == "List" ? "active-link" : "")"
+                               asp-controller="Property" asp-action="List">
+                                <i class="bi bi-grid text-warning"></i> Properties
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-sm btn-outline-light me-3" id="themeToggle" title="Toggle dark/light mode">
+                            <i class="bi bi-moon-stars" id="themeIcon"></i>
+                        </button>
+
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <div class="dropdown user-menu">
+                                <button class="btn btn-light dropdown-toggle d-flex align-items-center text-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-person-circle me-2 text-warning"></i>
+                                    <span>@User.Identity.Name</span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <span class="dropdown-item-text">
+                                            <i class="bi bi-person-badge text-secondary"></i>
+                                            <strong>@User.Identity.Name</strong>
+                                        </span>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form asp-controller="User" asp-action="Logout" method="post" class="d-inline w-100">
+                                            <button type="submit" class="dropdown-item text-danger">
+                                                <i class="bi bi-box-arrow-right"></i> Logout
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="d-flex">
+                                <a class="btn btn-sm btn-outline-light me-2" asp-controller="User" asp-action="Login">
+                                    <i class="bi bi-box-arrow-in-right"></i> Login
+                                </a>
+                                <a class="btn btn-sm btn-warning text-dark fw-bold" asp-controller="User" asp-action="Register">
+                                    <i class="bi bi-person-plus"></i> Register
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main class="py-4 flex-grow-1">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="container">
+                <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                    <i class="bi bi-check-circle me-2"></i> @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="container">
+                <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i> @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        }
+
+        <div class="container">
+            @RenderBody()
+        </div>
+    </main>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+    <footer class="footer py-4 mt-4">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <h5 class="fw-bold mb-3">🏡 PropertyRental</h5>
+                    <p class="text mb-0">Find your perfect rental solution with ease. Browse thousands of listings worldwide.</p>
+                </div>
+                <div class="col-md-2">
+                    <h6 class="fw-bold mb-3">Quick Links</h6>
+                    <ul class="list-unstyled mb-0">
+                        <li><a href="#" class="text-decoration-none">Home</a></li>
+                        <li><a href="#" class="text-decoration-none">Properties</a></li>
+                        <li><a href="#" class="text-decoration-none">About Us</a></li>
+                        <li><a href="#" class="text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="fw-bold mb-3">Legal</h6>
+                    <ul class="list-unstyled mb-0">
+                        <li><a href="#" class="text-decoration-none">Terms of Service</a></li>
+                        <li><a href="#" class="text-decoration-none">Privacy Policy</a></li>
+                        <li><a href="#" class="text-decoration-none">Cookie Policy</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="fw-bold mb-3">Connect With Us</h6>
+                    <h4><a href="#" class="footer mb-3 fw-bold"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="footer mb-3 fw-bold"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#" class="footer mb-3 fw-bold"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="footer mb-3 fw-bold"><i class="bi bi-linkedin"></i></a>
+                        </h4>
+                </div>
+            </div>
+            <hr class="my-4 border-secondary">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <small>&copy; @DateTime.Now.Year PropertyRental. All rights reserved.</small>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <small>Made with <i class="bi bi-heart-fill text-danger"></i> by PropertyRental Team</small>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle JS (with Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Smooth Progress Bar Animation
+            const progressBar = document.getElementById('pageLoadProgress');
+            let width = 0;
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => { progressBar.style.width = '0%'; }, 300);
+                } else {
+                    width += 5;
+                    progressBar.style.width = width + '%';
+                }
+            }, 10);
+
+            // Theme Toggle
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const htmlElement = document.documentElement;
+
+            // Apply stored theme preference
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                htmlElement.setAttribute('data-bs-theme', 'dark');
+                themeIcon.classList.replace('bi-moon-stars', 'bi-sun');
+            }
+
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = htmlElement.getAttribute('data-bs-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+                htmlElement.setAttribute('data-bs-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+
+                themeIcon.classList.replace(newTheme === 'dark' ? 'bi-moon-stars' : 'bi-sun', newTheme === 'dark' ? 'bi-sun' : 'bi-moon-stars');
+            });
+
+            // Auto-dismiss alerts after 5 seconds
+            document.querySelectorAll('.alert').forEach(alert => {
+                setTimeout(() => {
+                    new bootstrap.Alert(alert).close();
+                }, 5000);
+            });
+
+            // Enable tooltips everywhere
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+            // Highlight active nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.getAttribute('href') === window.location.pathname) {
+                    link.classList.add('active-link');
+                }
+            });
+        });
+
+        // Toast Notification Function
+        function showNotification(message, type = 'success') {
+            const toastContainer = document.querySelector('.toast-container');
+            const toastId = 'toast-' + Date.now();
+            const bgClass = type === 'success' ? 'bg-success' : 'bg-danger';
+            const iconClass = type === 'success' ? 'bi-check-circle' : 'bi-exclamation-circle';
+
+            const toastHtml = `
+                <div id="${toastId}" class="toast align-items-center text-white ${bgClass} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="bi ${iconClass} me-2"></i> ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            `;
+
+            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+            const toastElement = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastElement, { autohide: true, delay: 5000 });
+            toast.show();
+
+            toastElement.addEventListener('hidden.bs.toast', () => {
+                toastElement.remove();
+            });
+        }
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

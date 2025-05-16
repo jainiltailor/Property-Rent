@@ -1,0 +1,178 @@
+﻿@model PropertyRent.Models.Property
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Add Property";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-house-add fs-4 me-2"></i>
+                        <h2 class="mb-0 fs-4">Add New Property</h2>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Add" enctype="multipart/form-data" method="post" class="needs-validation" novalidate>
+                        <div class="row g-4">
+                            <!-- Left Column - Basic Info -->
+                            <div class="col-md-8">
+                                <h5 class="mb-3">Basic Information</h5>
+
+                                <div class="mb-3">
+                                    <label asp-for="Title" class="form-label fw-bold">Property Title</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-tag"></i></span>
+                                        <input asp-for="Title" class="form-control" placeholder="Enter a descriptive title" required />
+                                    </div>
+                                    <div class="form-text">Choose a title that best describes your property.</div>
+                                    <span asp-validation-for="Title" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Description" class="form-label fw-bold">Property Description</label>
+                                    <textarea asp-for="Description" class="form-control" rows="5"
+                                              placeholder="Describe your property, amenities, and surroundings" required></textarea>
+                                    <div class="form-text">
+                                        A detailed description will help attract more guests.
+                                    </div>
+                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label asp-for="Location" class="form-label fw-bold">Location</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                                            <input asp-for="Location" class="form-control" placeholder="City, Area" required />
+                                        </div>
+                                        <span asp-validation-for="Location" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="PricePerDay" class="form-label fw-bold">Price Per Day (₹)</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">₹</span>
+                                            <input asp-for="PricePerDay" type="number" class="form-control" placeholder="0.00" min="1" step="0.01" required />
+                                            <span class="input-group-text">/day</span>
+                                        </div>
+                                        <span asp-validation-for="PricePerDay" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column - Image Upload -->
+                            <div class="col-md-4">
+                                <h5 class="mb-3">Property Image</h5>
+                                <div class="image-upload-container border rounded-3 p-3 text-center">
+                                    <div class="mb-3 position-relative" id="imagePreviewContainer">
+                                        <img id="imagePreview" src="/images/property-placeholder.jpg"
+                                             class="img-fluid rounded mb-2" alt="Property image preview">
+                                        <button type="button" id="removeImage" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2"
+                                                style="display: none;">
+                                            <i class="bi bi-x"></i>
+                                        </button>
+                                    </div>
+                                    <label for="imageFile" class="form-label fw-bold d-block">Upload Image</label>
+                                    <div class="input-group mb-3">
+                                        <input type="file" name="imageFile" id="imageFile" class="form-control"
+                                               accept="image/*" onchange="previewImage(this);" />
+                                    </div>
+                                    <small class="text-muted">
+                                        Recommended: 1200 x 800 pixels, JPEG or PNG format
+                                    </small>
+                                </div>
+
+                                <div class="alert alert-info mt-4">
+                                    <h6><i class="bi bi-info-circle"></i> Important Note</h6>
+                                    <p class="small mb-0">
+                                        Your property listing will be reviewed before it appears publicly.
+                                        The review process usually takes 1-2 business days.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Submit Buttons -->
+                            <div class="col-12 text-end border-top pt-4">
+                                <button type="button" class="btn btn-outline-secondary me-2">
+                                    <i class="bi bi-x-circle me-1"></i> Cancel
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-cloud-upload me-1"></i> Submit Property
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .image-upload-container {
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+
+            .image-upload-container:hover {
+                border-color: #0d6efd !important;
+            }
+
+        #imagePreview {
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+        }
+
+        /* Form styling */
+        .form-control:focus, .form-select:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+
+        .property-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        function previewImage(input) {
+            const preview = document.getElementById('imagePreview');
+            const removeBtn = document.getElementById('removeImage');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    removeBtn.style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('removeImage').addEventListener('click', function() {
+                document.getElementById('imageFile').value = '';
+                document.getElementById('imagePreview').src = '/images/property-placeholder.jpg';
+                this.style.display = 'none';
+            });
+
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        });
+    </script>
+}

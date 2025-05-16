@@ -1,0 +1,35 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Welcome to PropertyRental!";
+}
+
+<div class="jumbotron text-center mt-5">
+    <h1 class="display-4 font-weight-bold">Welcome to Property Rental Hub</h1>
+    <p class="lead navbar-text">Find, rent, or list properties easily and securely.</p>
+    <hr class="my-4">
+    <p class="mb-4">Explore the best places to stay, or list your own property today!</p>
+
+    <div class="d-flex justify-content-center flex-wrap">
+        <a class="btn btn-primary btn-lg m-2" asp-controller="Property" asp-action="List">Browse Properties</a>
+        <a class="btn btn-success btn-lg m-2" asp-controller="User" asp-action="Login">Login</a>
+        <a class="btn btn-outline-info btn-lg m-2" asp-controller="User" asp-action="Register">Sign Up</a>
+    </div>
+</div>
+
+<div class="row text-center mt-5">
+    <div class="col-md-4">
+        <h4 class="font-weight-bold">🏡 Wide Range of Properties</h4>
+        <p class="text">From budget stays to premium listings.</p>
+    </div>
+    <div class="col-md-4">
+        <h4 class="font-weight-bold">🔒 Secure Booking</h4>
+        <p class="text">Safe and seamless booking experience.</p>
+    </div>
+    <div class="col-md-4">
+        <h4 class="font-weight-bold">💰 List Your Property</h4>
+        <p class="text">Earn money by renting out your space.</p>
+    </div>
+</div>
