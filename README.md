@@ -33,8 +33,8 @@ Open PropertyRent.sln in Visual Studio.
 3. **Restore dependencies**:
 
 Visual Studio will automatically restore the necessary NuGet packages upon opening the solution. If not, you can manually restore them:
-
     ```bash
+    
     dotnet restore
 
 4. Build and run the project:
