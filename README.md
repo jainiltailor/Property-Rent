@@ -1,4 +1,4 @@
-# Property Rent
+# Property Rent MVC
 
 This repository contains a sample ASP.NET Core Web API project designed to manage property rental operations. It serves as a foundational backend system for handling property listings, tenant information, and rental transactions.
 
